@@ -1,0 +1,83 @@
+[package]
+name = "leptos_3385"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[profile.release]
+codegen-units = 1
+lto = true
+
+[profile.wasm-release]
+inherits = "release"
+opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[dependencies]
+leptos = { version = "0.7.2", features = ["nightly"] }
+leptos_axum = {  version = "0.7.2", optional = true }
+leptos_meta = "0.7.2"
+leptos_router = { version = "0.7.2", features = ["nightly"] }
+
+axum = { version = "0.7.9", optional = true }
+console_error_panic_hook = "0.1.7"
+http = { version = "1.1", optional = true }
+#gloo-net = { version = "0.6.0", features = ["http"] }
+log = "0.4"
+#send_wrapper = { version = "0.6", features = ["futures"] }
+serde = { version = "1.0", features = ["derive"] }
+tokio = {  version = "1.42", features = ["rt-multi-thread"], optional = true }
+tower = { version = "0.5.2", optional = true }
+tower-http = { version = "0.6.2", optional = true }
+tracing = "0.1.40"
+#web-sys = { version = "0.3.76" }
+wasm-bindgen = "=0.2.99"
+
+[features]
+default = ["csr"]
+csr = ["leptos/csr"]
+hydrate = ["leptos/hydrate"]
+ssr = [
+  "leptos/ssr",
+  "leptos_axum",
+  "leptos_meta/ssr",
+  "leptos_router/ssr",
+
+  "dep:axum",
+  "dep:tower",
+  "dep:tower-http",
+  "dep:tokio",
+  "dep:http",
+]
+
+[package.metadata.cargo-all-features]
+denylist = ["axum", "tower", "tower-http", "tokio", "http", "leptos_axum"]
+skip_feature_sets = [["csr", "ssr"], ["csr", "hydrate"], ["ssr", "hydrate"]]
+
+[package.metadata.leptos]
+output-name = "leptos_3385"
+site-root = "target/site"
+site-pkg-dir = "pkg"
+
+assets-dir = "public"
+style-file = "./style.css"
+
+site-addr = "127.0.0.1:3000"
+reload-port = 3001
+
+end2end-cmd = "npx playwright test"
+browserquery = "defaults"
+watch = true
+
+env = "DEV"
+
+bin-features = ["ssr"]
+bin-default-features = false
+
+lib-features = ["hydrate"]
+lib-default-features = false
+lib-profile-release = "wasm-release"
