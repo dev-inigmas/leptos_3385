@@ -1,0 +1,5 @@
+edition = "2021"
+max_width = 80
+tab_spaces = 2
+blank_lines_upper_bound = 2
+wrap_comments = true
